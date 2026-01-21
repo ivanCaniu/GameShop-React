@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
+import ScrollToTop from './components/utils/ScrollToTop';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
@@ -21,6 +22,7 @@ import ProtectedRoute from './components/shared/ProtectedRoute';
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <ProductProvider>
           <CartProvider>

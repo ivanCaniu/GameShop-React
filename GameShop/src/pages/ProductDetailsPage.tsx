@@ -32,7 +32,7 @@ const ProductDetailsPage = () => {
 
     // Related Products Logic
     const relatedProducts = products
-        .filter(p => p.id !== product.id && (p.platforms.some(pl => product.platforms.includes(pl)) || p.type === product.type))
+        .filter(p => p.id !== product.id && !p.isPreorder && (p.platforms.some(pl => product.platforms.includes(pl)) || p.type === product.type))
         .slice(0, 4);
 
     return (
