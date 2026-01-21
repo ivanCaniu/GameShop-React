@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Cyberpunk Theme Palette */
+  --color-bg-primary: #0f172a;
+  /* Slate 900 - Deep background */
+  --color-bg-secondary: #1e293b;
+  /* Slate 800 - Card background */
+  --color-text-primary: #f8fafc;
+  /* Slate 50 - Main text */
+  --color-text-secondary: #94a3b8;
+  /* Slate 400 - Muted text */
+
+  --color-accent: #10b981;
+  /* Emerald 500 - Primary Green */
+  --color-accent-glow: rgba(16, 185, 129, 0.5);
+
+  --color-neon-blue: #0ea5e9;
+  /* Sky 500 */
+  --color-neon-purple: #8b5cf6;
+  /* Violet 500 */
+  --color-neon-pink: #ec4899;
+  /* Pink 500 */
+
+  --font-primary: 'Inter', system-ui, sans-serif;
+  --font-display: 'Oswald', sans-serif;
+  /* Recommended for "Gamer" headers */
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-primary);
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display, var(--font-primary));
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Custom Utilities can go here or in Tailwind config */
+.text-neon-green {
+  color: var(--color-accent);
+  text-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.bg-glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
