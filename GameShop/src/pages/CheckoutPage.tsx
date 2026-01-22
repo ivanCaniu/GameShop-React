@@ -8,7 +8,7 @@ import Card from '../components/ui/Card';
 import Input from '../components/ui/Input';
 
 const CheckoutPage = () => {
-    const { cart, cartTotal, clearCart } = useCart();
+    const { cart, cartTotal, clearCart, subtotal, discountAmount } = useCart();
     const { currentUser, addOrder } = useAuth();
     const navigate = useNavigate();
     const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
@@ -182,9 +182,21 @@ const CheckoutPage = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between font-bold text-lg">
-                            <span>Total</span>
-                            <span>${cartTotal.toLocaleString('es-CL')}</span>
+                        <div className="mt-4 pt-4 border-t border-gray-700 font-bold text-lg space-y-2">
+                            <div className="flex justify-between text-sm text-gray-400 font-normal">
+                                <span>Subtotal</span>
+                                <span>${subtotal.toLocaleString('es-CL')}</span>
+                            </div>
+                            {discountAmount > 0 && (
+                                <div className="flex justify-between text-sm text-green-400 font-normal">
+                                    <span>Descuento</span>
+                                    <span>- ${discountAmount.toLocaleString('es-CL')}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between pt-2 border-t border-gray-700">
+                                <span>Total</span>
+                                <span>${cartTotal.toLocaleString('es-CL')}</span>
+                            </div>
                         </div>
                     </Card>
                 </div>

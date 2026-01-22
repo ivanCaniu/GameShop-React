@@ -3,9 +3,10 @@ import { Trash2, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import CouponInput from '../components/cart/CouponInput';
 
 const CartPage = () => {
-    const { cart, removeFromCart, cartTotal } = useCart();
+    const { cart, removeFromCart, cartTotal, subtotal, discountAmount } = useCart();
     // Simplified for MVP: No quantity update logic yet, just removing.
     // handleQuantityChange logic would go here.
 
@@ -37,7 +38,7 @@ const CartPage = () => {
                                     {item.title}
                                 </Link>
                                 <div className="text-sm text-gray-400">
-                                    {item.platform} • {item.type}
+                                    {item.platforms.join(', ')} • {item.type}
                                 </div>
                             </div>
 
@@ -65,14 +66,24 @@ const CartPage = () => {
                     <Card className="p-6 sticky top-24">
                         <h3 className="text-xl font-bold mb-6 border-b border-gray-700 pb-2">Resumen</h3>
 
+                        <div className="mb-6">
+                            <CouponInput />
+                        </div>
+
                         <div className="space-y-4 mb-6">
                             <div className="flex justify-between text-gray-400">
                                 <span>Subtotal</span>
-                                <span>${cartTotal.toLocaleString('es-CL')}</span>
+                                <span>${subtotal.toLocaleString('es-CL')}</span>
                             </div>
+                            {discountAmount > 0 && (
+                                <div className="flex justify-between text-green-400">
+                                    <span>Descuento</span>
+                                    <span>- ${discountAmount.toLocaleString('es-CL')}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between text-gray-400">
                                 <span>Envío estimado</span>
-                                <span>Por calcular</span>
+                                <span>Gratis (Digital)</span>
                             </div>
                             <div className="flex justify-between text-xl font-bold text-white pt-4 border-t border-gray-700">
                                 <span>Total</span>

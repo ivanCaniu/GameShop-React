@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { CartItem, Product } from '../types';
+import type { CartItem, Product, Coupon } from '../types';
 
 interface CartContextType {
     cart: CartItem[];
@@ -7,7 +7,13 @@ interface CartContextType {
     removeFromCart: (productId: string) => void;
     clearCart: () => void;
     cartTotal: number;
+    subtotal: number;
     cartCount: number;
+    applyCoupon: (code: string) => void;
+    removeCoupon: () => void;
+    appliedCoupon: Coupon | null;
+    discountAmount: number;
+    couponError: string | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -20,8 +26,17 @@ export const useCart = () => {
     return context;
 };
 
+// Mock Coupons
+const AVAILABLE_COUPONS: Coupon[] = [
+    { code: 'VERANO2026', type: 'percentage', value: 20, description: '20% OFF de Verano' },
+    { code: 'GAMER10', type: 'percentage', value: 10, description: '10% para Gamers' },
+    { code: 'WELCOME5000', type: 'fixed', value: 5000, minOrderValue: 20000, description: '$5.000 de descuento en compras sobre $20.000' }
+];
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+    const [couponError, setCouponError] = useState<string | null>(null);
 
     // Try to load from localStorage on mount
     useEffect(() => {
@@ -51,8 +66,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCart(prev => {
             const existingItem = prev.find(item => item.id === product.id);
             if (existingItem) {
-                // Check if adding exceeds max limits (e.g. 1 per user for rare items)
-                // For MVP we just increment
                 return prev.map(item =>
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + quantity }
@@ -69,10 +82,59 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     const clearCart = () => {
         setCart([]);
+        setAppliedCoupon(null);
+        setCouponError(null);
     };
 
-    const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
+
+    // Coupon Logic
+    const applyCoupon = (code: string) => {
+        setCouponError(null);
+        const coupon = AVAILABLE_COUPONS.find(c => c.code.toUpperCase() === code.toUpperCase());
+
+        if (!coupon) {
+            setCouponError('Cupón inválido');
+            return;
+        }
+
+        if (coupon.minOrderValue && subtotal < coupon.minOrderValue) {
+            setCouponError(`El pedido mínimo es $${coupon.minOrderValue.toLocaleString('es-CL')}`);
+            return;
+        }
+
+        setAppliedCoupon(coupon);
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponError(null);
+    };
+
+    // Calculate Discount
+    let discountAmount = 0;
+    if (appliedCoupon) {
+        if (appliedCoupon.type === 'percentage') {
+            discountAmount = subtotal * (appliedCoupon.value / 100);
+        } else {
+            discountAmount = appliedCoupon.value;
+        }
+    }
+
+    // Validate discount doesn't exceed total
+    if (discountAmount > subtotal) discountAmount = subtotal;
+
+    const cartTotal = subtotal - discountAmount;
+
+    // Re-validate coupon if subtotal drops below min value (e.g. item removed)
+    useEffect(() => {
+        if (appliedCoupon && appliedCoupon.minOrderValue && subtotal < appliedCoupon.minOrderValue) {
+            setAppliedCoupon(null);
+            setCouponError(`Cupón removido: pedido mínimo $${appliedCoupon.minOrderValue.toLocaleString('es-CL')}`);
+        }
+    }, [subtotal, appliedCoupon]);
+
 
     const value = {
         cart,
@@ -80,7 +142,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeFromCart,
         clearCart,
         cartTotal,
-        cartCount
+        subtotal,
+        cartCount,
+        applyCoupon,
+        removeCoupon,
+        appliedCoupon,
+        discountAmount,
+        couponError
     };
 
     return (

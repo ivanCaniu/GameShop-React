@@ -33,7 +33,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             try {
                 // Ensure orders array exists
                 const parsed = JSON.parse(storedUser);
+                // Ensure arrays exist
                 if (!parsed.orders) parsed.orders = [];
+                if (!parsed.wishlist) parsed.wishlist = [];
                 setCurrentUser(parsed);
             } catch (e) {
                 console.error("Session parse error", e);
@@ -44,13 +46,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const saveUserSession = (user: UserProfile) => {
-        setCurrentUser(user);
-        localStorage.setItem('gameshop_session', JSON.stringify(user));
+        // Ensure wishlist always exists before saving
+        const userToSave = {
+            ...user,
+            wishlist: user.wishlist || [],
+            orders: user.orders || []
+        };
+        setCurrentUser(userToSave);
+        localStorage.setItem('gameshop_session', JSON.stringify(userToSave));
 
         // Also update the user in the main "database"
         const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
         // Use merge to avoid losing password or other fields not in UserProfile
-        const updatedUsers = users.map((u: any) => u.uid === user.uid ? { ...u, ...user } : u);
+        const updatedUsers = users.map((u: any) => u.uid === user.uid ? { ...u, ...userToSave } : u);
         localStorage.setItem('gameshop_users', JSON.stringify(updatedUsers));
     };
 
@@ -68,7 +76,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     uid: foundUser.uid,
                     email: foundUser.email,
                     displayName: foundUser.displayName,
-                    orders: foundUser.orders || []
+                    orders: foundUser.orders || [],
+                    wishlist: foundUser.wishlist || []
                 };
                 saveUserSession(userProfile);
             } else {
@@ -99,7 +108,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 email,
                 password,
                 displayName: email.split('@')[0],
-                orders: []
+                orders: [],
+                wishlist: []
             };
 
             users.push(newUser);
@@ -109,7 +119,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 uid: newUser.uid,
                 email: newUser.email,
                 displayName: newUser.displayName,
-                orders: []
+                orders: [],
+                wishlist: []
             };
 
             saveUserSession(userProfile);

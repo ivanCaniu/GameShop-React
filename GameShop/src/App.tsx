@@ -4,6 +4,7 @@ import ScrollToTop from './components/utils/ScrollToTop';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
+import { ReviewProvider } from './context/ReviewContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
@@ -24,41 +25,43 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AuthProvider>
-        <ProductProvider>
-          <CartProvider>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/catalog" element={<CatalogPage />} />
-                <Route path="/product/:id" element={<ProductDetailsPage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/releases" element={<ReleasesPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/checkout" element={
-                  <ProtectedRoute>
-                    <CheckoutPage />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin" element={
-                  <ProtectedRoute requireAdmin>
-                    <AdminPage />
-                  </ProtectedRoute>
-                } />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                } />
-                {/* 404 Redirect */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Layout>
-          </CartProvider>
-        </ProductProvider>
+        <ReviewProvider>
+          <ProductProvider>
+            <CartProvider>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/catalog" element={<CatalogPage />} />
+                  <Route path="/product/:id" element={<ProductDetailsPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/releases" element={<ReleasesPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/checkout" element={
+                    <ProtectedRoute>
+                      <CheckoutPage />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin" element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminPage />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  } />
+                  {/* 404 Redirect */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Layout>
+            </CartProvider>
+          </ProductProvider>
+        </ReviewProvider>
       </AuthProvider>
     </BrowserRouter>
   );

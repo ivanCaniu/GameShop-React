@@ -5,11 +5,16 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import StarRating from '../components/shared/StarRating';
+import ReviewList from '../components/shared/ReviewList';
+import ReviewForm from '../components/shared/ReviewForm';
+import { useReviews } from '../context/ReviewContext';
 
 const ProductDetailsPage = () => {
     const { id } = useParams<{ id: string }>();
     const { getProduct, products } = useProducts();
     const product = getProduct(id || '');
+    const { getAverageRating, getReviewCount } = useReviews();
 
     if (!product) {
         return (
@@ -73,6 +78,12 @@ const ProductDetailsPage = () => {
                         <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-tight">
                             {product.title}
                         </h1>
+                        <div className="flex items-center gap-2 mt-2">
+                            <StarRating rating={getAverageRating(product.id)} />
+                            <span className="text-gray-400 text-sm">
+                                {getAverageRating(product.id)} ({getReviewCount(product.id)} reseñas)
+                            </span>
+                        </div>
                     </div>
 
                     <div className="flex items-end gap-4 border-b border-gray-700 pb-6">
@@ -156,6 +167,27 @@ const ProductDetailsPage = () => {
                             </p>
                         </Card>
                     )}
+                </div>
+            </div>
+
+            {/* Reviews Section */}
+            <div className="max-w-4xl mx-auto mb-20 animate-fade-in-up">
+                <h2 className="text-3xl font-display font-bold mb-8 text-white text-center">
+                    Opiniones de la Comunidad
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                            Dejar una reseña
+                        </h3>
+                        <ReviewForm productId={product.id} />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold mb-6">
+                            Comentarios ({getReviewCount(product.id)})
+                        </h3>
+                        <ReviewList productId={product.id} />
+                    </div>
                 </div>
             </div>
 
