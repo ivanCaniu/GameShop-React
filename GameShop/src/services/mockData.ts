@@ -9,7 +9,7 @@ export const products: Product[] = [
         originalPrice: 69990,
         platforms: ['PS5', 'PS4'],
         type: 'Physical',
-        image: 'https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=800&auto=format&fit=crop', // Kratos-like vibe
+        image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2322010/capsule_616x353.jpg?t=1750909504',
         isNew: true,
         stock: 10,
         description: 'Kratos y Atreus deben viajar a cada uno de los Nueve Reinos en busca de respuestas.'
@@ -20,7 +20,7 @@ export const products: Product[] = [
         price: 64990,
         platforms: ['PS5'],
         type: 'Digital',
-        image: 'https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?q=80&w=800&auto=format&fit=crop', // Spider-like vibe
+        image: 'https://ggsel.net/uploads/buyboxes/big/f5f9c17da689596cf017919b416ed367.jpg', // Spider-like vibe
         stock: 99,
         isNew: true
     },
@@ -30,7 +30,7 @@ export const products: Product[] = [
         price: 54990,
         platforms: ['PS5'],
         type: 'Physical',
-        image: 'https://images.unsplash.com/photo-1560252829-8432a2204c32?q=80&w=800&auto=format&fit=crop', // Fantasy sword
+        image: 'https://image.api.playstation.com/vulcan/ap/rnd/202401/1809/f094b684796f1e7cd2ba10ea62e45f69b52b4782a38e2aa4.png', // Final Fantasy VII Rebirth
         stock: 5
     },
     {
@@ -39,7 +39,7 @@ export const products: Product[] = [
         price: 35000,
         platforms: ['PS5', 'Xbox', 'PC'],
         type: 'Digital',
-        image: 'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=800&auto=format&fit=crop', // Dark fantasy
+        image: 'https://image.api.playstation.com/vulcan/ap/rnd/202402/0817/114b1df9577098209a8bb8e45f4a009e201e9a2fa5113a06.png', // Elden Ring Shadow of the Erdtree
         stock: 50
     },
     // --- XBOX ---
@@ -49,7 +49,7 @@ export const products: Product[] = [
         price: 29990,
         platforms: ['Xbox', 'PC'],
         type: 'Physical',
-        image: 'https://images.unsplash.com/photo-1627856013091-fedf7bb0615b?q=80&w=800&auto=format&fit=crop', // Sci-fi armor
+        image: 'https://cloudfront-us-east-1.images.arcpublishing.com/copesa/BVPSWA6JGRE3FBZJRQM74YVGGE.jpg', // Halo Infinite
         stock: 8
     },
     {
@@ -58,7 +58,7 @@ export const products: Product[] = [
         price: 45990,
         platforms: ['Xbox', 'PC'],
         type: 'Digital',
-        image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop', // Space
+        image: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1716740/header.jpg?t=1749757928', // Starfield
         stock: 99
     },
     // --- SWITCH ---
@@ -68,7 +68,7 @@ export const products: Product[] = [
         price: 49990,
         platforms: ['Switch'],
         type: 'Physical',
-        image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800&auto=format&fit=crop', // Adventure
+        image: 'https://upload.wikimedia.org/wikipedia/en/f/fb/The_Legend_of_Zelda_Tears_of_the_Kingdom_cover.jpg', // Zelda TotK
         stock: 12
     },
     {
@@ -77,7 +77,7 @@ export const products: Product[] = [
         price: 39990,
         platforms: ['Switch'],
         type: 'Digital',
-        image: 'https://images.unsplash.com/photo-1593118247619-e2d6f056869e?q=80&w=800&auto=format&fit=crop', // Racing
+        image: 'https://juegosdigitaleschile.com/files/images/productos/1644881577-1637878639-mario-kart-8-deluxe.jpg', // Mario Kart 8
         stock: 99
     },
     // --- PC ---
@@ -87,7 +87,7 @@ export const products: Product[] = [
         price: 25000,
         platforms: ['PC', 'PS5', 'Xbox'],
         type: 'Digital',
-        image: 'https://images.unsplash.com/photo-1533972724312-6a8506f478c5?q=80&w=800&auto=format&fit=crop', // Cyberpunk neon
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBjLZq5ty97PF7Np4HShhJ1YeON-gRxYTzUA&s', // Cyberpunk 2077
         stock: 99,
         isNew: false
     },
@@ -97,17 +97,17 @@ export const products: Product[] = [
         price: 35000,
         platforms: ['PC', 'PS5', 'Xbox'],
         type: 'Digital',
-        image: 'https://images.unsplash.com/photo-1642479755109-17387cc2694e?q=80&w=800&auto=format&fit=crop', // D&D dice/fantasy
+        image: 'https://m.media-amazon.com/images/M/MV5BN2I0N2Y3MWUtNjJiNy00NjRjLWE4ZTctOTQ2YWVhM2VhMTM4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', // Baldurs Gate 3
         stock: 99
     },
     // --- PRE-ORDERS ---
     {
         id: '11',
-        title: 'Resident Evil 9: Eclipse',
+        title: 'Resident Evil 9: Requiem',
         price: 69990,
         platforms: ['PS5', 'Xbox', 'PC'],
         type: 'Physical',
-        image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop', // Spooky
+        image: 'https://juegosdigitaleschile.com/files/images/noticias/1752877892_2.webp', // RE9
         stock: 999,
         isPreorder: true,
         releaseDate: '15 Oct 2026',
@@ -119,7 +119,7 @@ export const products: Product[] = [
         price: 79990,
         platforms: ['PS5', 'Xbox'],
         type: 'Physical',
-        image: 'https://images.unsplash.com/photo-1628260412297-a3377e45006f?q=80&w=600&auto=format&fit=crop', // Miami
+        image: 'https://image.api.playstation.com/vulcan/ap/rnd/202505/0616/c9f078c260d79339cb581054ce5ca49f2b56ab943d1beb20.png', // GTA VI
         stock: 999,
         isPreorder: true,
         releaseDate: 'Late 2026',
