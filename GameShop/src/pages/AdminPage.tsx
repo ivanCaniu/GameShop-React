@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Package, Users, Settings, Plus, Edit, Trash2, X, Save, Image as ImageIcon } from 'lucide-react';
+import { Package, Users, Settings, Plus, Edit, Trash2, X, Save } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
