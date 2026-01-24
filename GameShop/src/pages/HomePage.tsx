@@ -59,7 +59,7 @@ const HomePage = () => {
                 <h2 className="text-2xl font-display font-bold mb-8 text-center uppercase tracking-widest text-gray-400">Explora por Plataforma</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <PlatformCard name="PlayStation 5" image="https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&q=80&w=400" url="/catalog?filter=PS5" />
-                    <PlatformCard name="Xbox Series" image="https://images.unsplash.com/photo-1621259182902-880a71ca90c2?auto=format&fit=crop&q=80&w=400" url="/catalog?filter=Xbox" />
+                    <PlatformCard name="Xbox Series" image="https://static.independentespanol.com/2020/10/16/11/newFile-2.jpg?width=1200" url="/catalog?filter=Xbox" />
                     <PlatformCard name="Nintendo Switch" image="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&q=80&w=400" url="/catalog?filter=Switch" />
                     <PlatformCard name="PC Gaming" image="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=400" url="/catalog?filter=PC" />
                 </div>
