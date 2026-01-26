@@ -20,7 +20,7 @@ export const products: Product[] = [
         price: 64990,
         platforms: ['PS5'],
         type: 'Digital',
-        image: 'https://ggsel.net/uploads/buyboxes/big/f5f9c17da689596cf017919b416ed367.jpg', // Spider-like vibe
+        image: 'https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/1c7b75d8ed9271516546560d219ad0b22ee0a263b4537bd8.png', // Spider-like vibe
         stock: 99,
         isNew: true
     },

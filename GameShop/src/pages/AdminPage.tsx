@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Package, Users, Settings, Plus, Edit, Trash2, X, Save } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -8,11 +8,37 @@ import type { Product } from '../types';
 
 const AdminPage = () => {
     const { products, addProduct, updateProduct, deleteProduct } = useProducts();
-    const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'settings'>('products');
-
     // Modal State
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'settings'>('products');
+
+    // Order State
+    const [allOrders, setAllOrders] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (activeTab === 'orders') {
+            const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
+            const orders: any[] = [];
+
+            users.forEach((user: any) => {
+                if (user.orders && Array.isArray(user.orders)) {
+                    user.orders.forEach((order: any) => {
+                        orders.push({
+                            ...order,
+                            customerName: user.displayName || 'Anonimo',
+                            customerEmail: user.email
+                        });
+                    });
+                }
+            });
+
+            // Sort by date (newest first) - assuming date is a string, might need parsing if format varies
+            // For now simple reverse if they are pushed in order, or just display as is.
+            setAllOrders(orders.reverse());
+        }
+    }, [activeTab]);
+
     const [formData, setFormData] = useState<Partial<Product>>({
         title: '',
         price: 0,
@@ -205,12 +231,63 @@ const AdminPage = () => {
 
                     {activeTab === 'orders' && (
                         <div className="space-y-6">
-                            <h2 className="text-2xl font-bold text-gray-400">Órdenes (Simulación)</h2>
-                            <Card className="p-10 text-center">
-                                <Users size={48} className="mx-auto text-gray-600 mb-4" />
-                                <p className="text-xl">En este MVP, las órdenes se guardan en el perfil de cada usuario en localStorage.</p>
-                                <p className="text-gray-400 mt-2">Para ver órdenes reales, inicia sesión como usuario y compra productos.</p>
-                            </Card>
+                            <h2 className="text-2xl font-bold">Órdenes Realizadas ({allOrders.length})</h2>
+
+                            {allOrders.length === 0 ? (
+                                <Card className="p-10 text-center">
+                                    <Users size={48} className="mx-auto text-gray-600 mb-4" />
+                                    <p className="text-xl">No hay órdenes registradas aún.</p>
+                                </Card>
+                            ) : (
+                                <Card className="overflow-hidden p-0">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm text-gray-400">
+                                            <thead className="bg-[#1e293b] text-gray-200 uppercase text-xs">
+                                                <tr>
+                                                    <th className="px-4 py-3">ID Compra</th>
+                                                    <th className="px-4 py-3">Cliente</th>
+                                                    <th className="px-4 py-3">Fecha</th>
+                                                    <th className="px-4 py-3">Items</th>
+                                                    <th className="px-4 py-3">Total</th>
+                                                    <th className="px-4 py-3">Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-700">
+                                                {allOrders.map((order, index) => (
+                                                    <tr key={index} className="hover:bg-gray-700/30">
+                                                        <td className="px-4 py-3 font-mono text-white">{order.id}</td>
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-white font-bold">{order.customerName}</span>
+                                                                <span className="text-xs">{order.customerEmail}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-3">{order.date}</td>
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex flex-col gap-1">
+                                                                {order.items.map((item: any, i: number) => (
+                                                                    <div key={i} className="flex gap-2 items-center text-xs">
+                                                                        <span className="text-gray-300">{item.title}</span>
+                                                                        <span className="text-gray-500">x{item.quantity}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-3 font-bold text-[var(--color-accent)]">
+                                                            ${order.total.toLocaleString('es-CL')}
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            <span className="px-2 py-1 rounded bg-green-500/20 text-green-400 border border-green-500/30 text-xs uppercase font-bold">
+                                                                {order.status}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </Card>
+                            )}
                         </div>
                     )}
                 </div>
