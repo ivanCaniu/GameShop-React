@@ -2,16 +2,41 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Heart } from 'lucide-react';
 import type { Product } from '../../types';
 import Card from '../ui/Card';
+import Skeleton from '../ui/Skeleton';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 
 interface ProductCardProps {
-    product: Product;
+    product?: Product;
+    loading?: boolean;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, loading = false }: ProductCardProps) => {
     const { addToCart } = useCart();
+    const { currentUser, toggleWishlist } = useAuth();
+
+    if (loading || !product) {
+        return (
+            <Card className="h-full flex flex-col relative overflow-hidden">
+                <div className="relative aspect-[3/4] w-full">
+                    <Skeleton className="w-full h-full" />
+                </div>
+                <div className="p-4 flex flex-col flex-grow space-y-3">
+                    <div className="flex justify-between">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-12" />
+                    </div>
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <div className="mt-auto pt-4 flex justify-between items-end">
+                        <Skeleton className="h-8 w-24" />
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                    </div>
+                </div>
+            </Card>
+        );
+    }
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault(); // Prevent navigating to details page
@@ -29,7 +54,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
     const typeColor = product.type === 'Digital' ? 'text-[var(--color-neon-blue)]' : 'text-orange-400';
 
-    const { currentUser, toggleWishlist } = useAuth();
     const isWishlisted = currentUser?.wishlist?.includes(product.id);
 
     const handleWishlist = (e: React.MouseEvent) => {

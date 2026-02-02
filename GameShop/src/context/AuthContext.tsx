@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import toast from 'react-hot-toast';
 import type { Order, UserProfile } from '../types';
+import { api } from '../services/api';
 
 interface AuthContextType {
     currentUser: UserProfile | null;
@@ -29,20 +31,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Initial load
     useEffect(() => {
         const storedUser = localStorage.getItem('gameshop_session');
+        const token = localStorage.getItem('token');
+
         if (storedUser) {
             try {
-                // Ensure orders array exists
                 const parsed = JSON.parse(storedUser);
-                // Ensure arrays exist
-                if (!parsed.orders) parsed.orders = [];
-                if (!parsed.wishlist) parsed.wishlist = [];
-                setCurrentUser(parsed);
+                // Si es usuario normal (tiene uid real de mongo) y NO hay token, limpiar sesión
+                if (parsed.uid && !parsed.uid.startsWith('google_') && !token) {
+                    console.warn("Sesión encontrada pero sin token. Cerrando sesión...");
+                    localStorage.removeItem('gameshop_session');
+                    setCurrentUser(null);
+                } else {
+                    // Resto de la lógica de hidratación...
+                    if (!parsed.orders) parsed.orders = [];
+                    if (!parsed.wishlist) parsed.wishlist = [];
+                    setCurrentUser(parsed);
+                }
             } catch (e) {
                 console.error("Session parse error", e);
                 localStorage.removeItem('gameshop_session');
             }
         }
         setLoading(false);
+
+        // Listener para cierre de sesión global (ej: 401 desde api)
+        const handleForceLogout = () => {
+            logout();
+        };
+
+        window.addEventListener('auth:logout', handleForceLogout);
+        return () => window.removeEventListener('auth:logout', handleForceLogout);
     }, []);
 
     const saveUserSession = (user: UserProfile) => {
@@ -57,32 +75,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Also update the user in the main "database"
         const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
-        // Use merge to avoid losing password or other fields not in UserProfile
-        const updatedUsers = users.map((u: any) => u.uid === user.uid ? { ...u, ...userToSave } : u);
-        localStorage.setItem('gameshop_users', JSON.stringify(updatedUsers));
+        const userIndex = users.findIndex((u: any) => u.uid === user.uid);
+
+        if (userIndex >= 0) {
+            users[userIndex] = { ...users[userIndex], ...userToSave };
+        } else {
+            users.push(userToSave);
+        }
+
+        localStorage.setItem('gameshop_users', JSON.stringify(users));
     };
+
+
+
+    // ... (existing imports)
 
     const login = async (email: string, password: string) => {
         setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 800));
-
         try {
-            const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
-            const foundUser = users.find((u: any) => u.email === email && u.password === password);
+            // Using the new API Helper
+            const data = await api.post<any>('/auth/login', { email, password });
 
-            if (foundUser) {
-                // Determine user profile
-                const userProfile: UserProfile = {
-                    uid: foundUser.uid,
-                    email: foundUser.email,
-                    displayName: foundUser.displayName,
-                    orders: foundUser.orders || [],
-                    wishlist: foundUser.wishlist || []
-                };
-                saveUserSession(userProfile);
-            } else {
-                throw new Error('Credenciales inválidas');
-            }
+            // Backend returns: { token, user: { id, name, email, role } }
+            const userProfile: UserProfile = {
+                uid: data.user.id,
+                email: data.user.email,
+                displayName: data.user.name,
+                role: data.user.role,
+                orders: [],
+                wishlist: []
+            };
+
+            localStorage.setItem('token', data.token);
+            saveUserSession(userProfile);
+
         } catch (error) {
             setLoading(false);
             throw error;
@@ -92,37 +118,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const register = async (email: string, password: string) => {
         setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 800));
-
         try {
-            const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
-            const existing = users.find((u: any) => u.email === email);
-
-            if (existing) {
-                throw new Error('Este correo ya está registrado');
-            }
-
-            const hash = Math.random().toString(36).substring(7);
-            const newUser = {
-                uid: `user_${hash}`,
+            // Using the new API Helper
+            const data = await api.post<any>('/auth/register', {
+                name: email.split('@')[0],
                 email,
-                password,
-                displayName: email.split('@')[0],
-                orders: [],
-                wishlist: []
-            };
-
-            users.push(newUser);
-            localStorage.setItem('gameshop_users', JSON.stringify(users));
+                password
+            });
 
             const userProfile: UserProfile = {
-                uid: newUser.uid,
-                email: newUser.email,
-                displayName: newUser.displayName,
+                uid: data.user.id,
+                email: data.user.email,
+                displayName: data.user.name,
+                role: data.user.role,
                 orders: [],
                 wishlist: []
             };
 
+            localStorage.setItem('token', data.token);
             saveUserSession(userProfile);
 
         } catch (error) {
@@ -135,11 +148,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = async () => {
         setCurrentUser(null);
         localStorage.removeItem('gameshop_session');
+        localStorage.removeItem('token');
     };
 
     const loginWithGoogle = async () => {
-        alert("En modo demo, usaremos un usuario de prueba.");
-        // Try to find existing google mock user
+        toast.success("En modo demo, usaremos un usuario de prueba.");
+        // Intentar encontrar usuario mock de google
         const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
         let mockUser = users.find((u: any) => u.uid === 'google_user_123');
 
@@ -155,13 +169,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const addOrder = async (order: Order) => {
         if (!currentUser) return;
 
-        // 1. Get fresh data from "database" to avoid stale state
-        const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
-        const userIndex = users.findIndex((u: any) => u.uid === currentUser.uid);
-
-        if (userIndex === -1) {
-            console.error("User not found in database");
+        // Security check: If no token, forbid action
+        if (!localStorage.getItem('token') && !currentUser.uid.startsWith('google_')) {
+            toast.error("Sesión inválida. Por favor inicia sesión nuevamente.");
+            await logout();
             return;
+        }
+
+        // 1. Get fresh data from "database" to avoid stale state
+        let users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
+        let userIndex = users.findIndex((u: any) => u.uid === currentUser.uid);
+
+        // Si no existe el usuario en la DB local (ej: registrado vía backend), crearlo
+        if (userIndex === -1) {
+            const newUser = { ...currentUser, orders: [] };
+            users.push(newUser);
+            userIndex = users.length - 1;
         }
 
         const userFromDb = users[userIndex];
@@ -194,10 +217,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (!currentUser) return;
 
         // 1. Refresh data
-        const users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
-        const userIndex = users.findIndex((u: any) => u.uid === currentUser.uid);
+        let users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
+        let userIndex = users.findIndex((u: any) => u.uid === currentUser.uid);
 
-        if (userIndex === -1) return;
+        // Si no existe, crearlo
+        if (userIndex === -1) {
+            const newUser = { ...currentUser, wishlist: [] };
+            users.push(newUser);
+            userIndex = users.length - 1;
+        }
 
         const userFromDb = users[userIndex];
         const currentWishlist = userFromDb.wishlist || [];

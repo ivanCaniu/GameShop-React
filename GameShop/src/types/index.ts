@@ -33,6 +33,7 @@ export interface UserProfile {
     uid: string;
     email: string;
     displayName: string;
+    role?: 'user' | 'admin';
     orders: Order[];
     wishlist?: string[]; // Array of product IDs
 }

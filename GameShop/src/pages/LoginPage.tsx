@@ -9,8 +9,14 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { login, loginWithGoogle, loading } = useAuth();
+    const { login, loginWithGoogle, loading, currentUser } = useAuth();
     const navigate = useNavigate();
+
+    // Redirigir si ya hay sesión
+    if (currentUser) {
+        navigate('/');
+        return null;
+    }
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();

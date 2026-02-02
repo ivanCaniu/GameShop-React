@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { ShoppingCart, Check, ArrowLeft, Heart, Share2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -32,10 +33,10 @@ const ProductDetailsPage = () => {
 
     const handleAddToCart = () => {
         addToCart(product);
-        alert('¡Producto añadido al carrito!');
+        toast.success('¡Producto añadido al carrito!');
     };
 
-    // Related Products Logic
+    // Lógica de Productos Relacionados
     const relatedProducts = products
         .filter(p => p.id !== product.id && !p.isPreorder && (p.platforms.some(pl => product.platforms.includes(pl)) || p.type === product.type))
         .slice(0, 4);
@@ -48,7 +49,7 @@ const ProductDetailsPage = () => {
             </Link>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-                {/* Image Section */}
+                {/* Sección de Imagen */}
                 <div className="relative aspect-[4/5] md:aspect-square rounded-2xl overflow-hidden shadow-2xl border border-white/5">
                     <img
                         src={product.image}
@@ -62,7 +63,7 @@ const ProductDetailsPage = () => {
                     )}
                 </div>
 
-                {/* Info Section */}
+                {/* Sección de Información */}
                 <div className="space-y-6">
                     <div>
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -110,7 +111,7 @@ const ProductDetailsPage = () => {
                         </p>
                     </div>
 
-                    {/* Features Grid (Mock) */}
+                    {/* Grid de Características (Mock) */}
                     <div className="grid grid-cols-2 gap-4 py-4">
                         <div className="flex items-center gap-2 text-sm text-gray-400">
                             <Check size={16} className="text-[var(--color-accent)]" />
@@ -130,7 +131,7 @@ const ProductDetailsPage = () => {
                         </div>
                     </div>
 
-                    {/* Actions */}
+                    {/* Acciones */}
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <Button
                             size="lg"
@@ -145,7 +146,7 @@ const ProductDetailsPage = () => {
                                 variant={currentUser?.wishlist?.includes(product.id) ? "primary" : "secondary"}
                                 size="lg"
                                 className="px-4"
-                                onClick={() => currentUser ? toggleWishlist(product.id) : alert("Inicia sesión para guardar favoritos")}
+                                onClick={() => currentUser ? toggleWishlist(product.id) : toast.error("Inicia sesión para guardar favoritos")}
                             >
                                 <Heart size={24} fill={currentUser?.wishlist?.includes(product.id) ? "currentColor" : "none"} />
                             </Button>
@@ -153,7 +154,7 @@ const ProductDetailsPage = () => {
                                 variant="outline"
                                 size="lg"
                                 className="px-4"
-                                onClick={() => alert('¡Enlace copiado al portapapeles!')}
+                                onClick={() => toast.success('¡Enlace copiado al portapapeles!')}
                             >
                                 <Share2 size={24} />
                             </Button>
@@ -170,7 +171,7 @@ const ProductDetailsPage = () => {
                 </div>
             </div>
 
-            {/* Reviews Section */}
+            {/* Sección de Reseñas */}
             <div className="max-w-4xl mx-auto mb-20 animate-fade-in-up">
                 <h2 className="text-3xl font-display font-bold mb-8 text-white text-center">
                     Opiniones de la Comunidad
@@ -191,7 +192,7 @@ const ProductDetailsPage = () => {
                 </div>
             </div>
 
-            {/* Related Products Section */}
+            {/* Sección de Productos Relacionados */}
             {relatedProducts.length > 0 && (
                 <div className="border-t border-gray-800 pt-12 animate-fade-in-up">
                     <h2 className="text-3xl font-display font-bold mb-8 text-white">

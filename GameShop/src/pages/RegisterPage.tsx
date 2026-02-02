@@ -10,8 +10,14 @@ const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-    const { register, loginWithGoogle, loading } = useAuth();
+    const { register, loginWithGoogle, loading, currentUser } = useAuth();
     const navigate = useNavigate();
+
+    // Redirigir si ya hay sesión
+    if (currentUser) {
+        navigate('/');
+        return null;
+    }
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();

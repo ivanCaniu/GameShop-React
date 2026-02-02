@@ -6,14 +6,14 @@ import { useProducts } from '../context/ProductContext';
 import Card from '../components/ui/Card';
 
 const HomePage = () => {
-    const { products } = useProducts();
+    const { products, loading } = useProducts();
     // const heroProduct = products.find(p => p.title.includes("God of War")) || products[0]; // Unused for now
     const newReleases = products.filter(p => p.isNew && !p.isPreorder).slice(0, 4);
 
     return (
         <div className="pb-12">
 
-            {/* HERO SECTION - Full Width */}
+            {/* SECCIÓN HÉROE - Ancho Completo */}
             <div className="relative h-[70vh] min-h-[500px] flex items-center overflow-hidden mb-16">
                 <div className="absolute inset-0 z-0">
                     <img
@@ -54,7 +54,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            {/* CATEGORIES SECTION */}
+            {/* SECCIÓN DE CATEGORÍAS */}
             <div className="container mx-auto px-4 mb-20">
                 <h2 className="text-2xl font-display font-bold mb-8 text-center uppercase tracking-widest text-gray-400">Explora por Plataforma</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -65,7 +65,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            {/* NEW RELEASES GRID (Darker Background Section) */}
+            {/* GRID DE NUEVOS LANZAMIENTOS (Sección de Fondo Oscuro) */}
             <section className="bg-[#1e293b]/30 py-16 mb-20">
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-end mb-12">
@@ -81,14 +81,17 @@ const HomePage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {newReleases.map(product => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
+                        {loading
+                            ? Array(4).fill(0).map((_, i) => <ProductCard key={i} loading />)
+                            : newReleases.map(product => (
+                                <ProductCard key={product.id} product={product} />
+                            ))
+                        }
                     </div>
                 </div>
             </section>
 
-            {/* FEATURES / WHY US */}
+            {/* CARACTERÍSTICAS / POR QUÉ NOSOTROS */}
             <div className="container mx-auto px-4 mb-20">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <FeatureItem
@@ -109,7 +112,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            {/* PROMO BANNER */}
+            {/* BANNER PROMOCIONAL */}
             <section className="container mx-auto px-4">
                 <div className="bg-gradient-to-r from-[var(--color-primary)] to-purple-900 rounded-3xl p-12 text-center relative overflow-hidden">
                     <div className="relative z-10">

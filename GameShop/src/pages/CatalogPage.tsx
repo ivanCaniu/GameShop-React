@@ -6,7 +6,7 @@ import { useProducts } from '../context/ProductContext';
 import Button from '../components/ui/Button';
 
 const CatalogPage = () => {
-    const { products } = useProducts();
+    const { products, loading } = useProducts();
     const [searchParams] = useSearchParams();
     const initialFilter = searchParams.get('filter') || 'All';
     const [filterPlatform, setFilterPlatform] = useState<string>(initialFilter);
@@ -81,9 +81,12 @@ const CatalogPage = () => {
 
             {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredProducts.map(product => (
-                    <ProductCard key={product.id} product={product} />
-                ))}
+                {loading
+                    ? Array(8).fill(0).map((_, i) => <ProductCard key={i} loading />)
+                    : filteredProducts.map(product => (
+                        <ProductCard key={product.id} product={product} />
+                    ))
+                }
             </div>
 
             {filteredProducts.length === 0 && (

@@ -14,16 +14,16 @@ const ProfilePage = () => {
             await logout();
             navigate('/login');
         } catch (error) {
-            console.error("Error logging out", error);
+            console.error("Error al cerrar sesión", error);
         }
     };
 
-    // Extract all digital items from all orders
+    // Extraer todos los ítems digitales de todos los pedidos
     const digitalGames = currentUser?.orders?.flatMap(order =>
         order.items.filter(item => item.type === 'Digital' && item.digitalCode)
     ) || [];
 
-    // Resolve Wishlist Items
+    // Resolver Ítems de la Lista de Deseos
     const wishlistIds = currentUser?.wishlist || [];
     const wishlistItems = products.filter(p => wishlistIds.includes(p.id));
 
@@ -32,7 +32,7 @@ const ProfilePage = () => {
             <h1 className="text-3xl font-display mb-8">Mi Perfil</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Sidebar Info */}
+                {/* Barra Lateral de Información */}
                 <div className="md:col-span-1">
                     <Card className="p-6">
                         <div className="flex items-center space-x-4 mb-6">
@@ -50,9 +50,9 @@ const ProfilePage = () => {
                     </Card>
                 </div>
 
-                {/* Main Content: Orders & Keys */}
+                {/* Contenido Principal: Pedidos & Keys */}
                 <div className="md:col-span-2 space-y-6">
-                    {/* My Keys Section */}
+                    {/* Sección Mis Keys */}
                     <section>
                         <h2 className="text-2xl font-display mb-4 text-[var(--color-neon-blue)]">Mis Keys Digitales</h2>
 
@@ -87,7 +87,7 @@ const ProfilePage = () => {
                         )}
                     </section>
 
-                    {/* Order History */}
+                    {/* Historial de Pedidos */}
                     <section>
                         <h2 className="text-2xl font-display mb-4">Historial de Pedidos</h2>
                         <Card className="p-0 overflow-hidden">
@@ -123,7 +123,7 @@ const ProfilePage = () => {
                             )}
                         </Card>
                     </section>
-                    {/* Wishlist Section */}
+                    {/* Sección Lista de Deseos */}
                     <section>
                         <h2 className="text-2xl font-display mb-4 text-pink-500">Mi Lista de Deseos ❤️</h2>
                         {wishlistItems.length > 0 ? (

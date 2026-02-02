@@ -19,12 +19,14 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import TermsPage from './pages/TermsPage';
 import ProtectedRoute from './components/shared/ProtectedRoute';
+import { ToastProvider } from './components/ui/ToastProvider';
 
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <AuthProvider>
+        <ToastProvider />
         <ReviewProvider>
           <ProductProvider>
             <CartProvider>

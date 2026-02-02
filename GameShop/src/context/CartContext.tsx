@@ -26,7 +26,7 @@ export const useCart = () => {
     return context;
 };
 
-// Mock Coupons
+// Cupones de Mock
 const AVAILABLE_COUPONS: Coupon[] = [
     { code: 'VERANO2026', type: 'percentage', value: 20, description: '20% OFF de Verano' },
     { code: 'GAMER10', type: 'percentage', value: 10, description: '10% para Gamers' },
@@ -38,26 +38,26 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
     const [couponError, setCouponError] = useState<string | null>(null);
 
-    // Try to load from localStorage on mount
+    // Intentar cargar desde localStorage al montar
     useEffect(() => {
         const savedCart = localStorage.getItem('gameshop_cart');
         if (savedCart) {
             try {
                 const parsedCart = JSON.parse(savedCart);
-                // Simple migration: if item has no platforms but has platform, fix it
+                // Migración simple: si el ítem no tiene plataformas pero tiene plataforma, arreglarlo
                 const migratedCart = parsedCart.map((item: any) => ({
                     ...item,
                     platforms: item.platforms || (item.platform ? [item.platform] : ['PS5'])
                 }));
                 setCart(migratedCart);
             } catch (error) {
-                console.error('Failed to parse cart from local storage');
-                localStorage.removeItem('gameshop_cart'); // Clear corrupted data
+                console.error('Error al analizar carrito desde almacenamiento local');
+                localStorage.removeItem('gameshop_cart'); // Limpiar datos corruptos
             }
         }
     }, []);
 
-    // Save to localStorage whenever cart changes
+    // Guardar en localStorage cuando cambie el carrito
     useEffect(() => {
         localStorage.setItem('gameshop_cart', JSON.stringify(cart));
     }, [cart]);
@@ -89,7 +89,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
 
-    // Coupon Logic
+    // Lógica de Cupones
     const applyCoupon = (code: string) => {
         setCouponError(null);
         const coupon = AVAILABLE_COUPONS.find(c => c.code.toUpperCase() === code.toUpperCase());
@@ -112,7 +112,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCouponError(null);
     };
 
-    // Calculate Discount
+    // Calcular Descuento
     let discountAmount = 0;
     if (appliedCoupon) {
         if (appliedCoupon.type === 'percentage') {
@@ -122,12 +122,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    // Validate discount doesn't exceed total
+    // Validar que el descuento no exceda el total
     if (discountAmount > subtotal) discountAmount = subtotal;
 
     const cartTotal = subtotal - discountAmount;
 
-    // Re-validate coupon if subtotal drops below min value (e.g. item removed)
+    // Re-validar cupón si subtotla baja del mínimo (ej. ítem removido)
     useEffect(() => {
         if (appliedCoupon && appliedCoupon.minOrderValue && subtotal < appliedCoupon.minOrderValue) {
             setAppliedCoupon(null);
