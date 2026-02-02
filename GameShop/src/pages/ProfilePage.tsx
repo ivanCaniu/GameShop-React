@@ -27,6 +27,10 @@ const ProfilePage = () => {
     const wishlistIds = currentUser?.wishlist || [];
     const wishlistItems = products.filter(p => wishlistIds.includes(p.id));
 
+    // Resolver Reservas
+    const reservationIds = currentUser?.reservations || [];
+    const reservedItems = products.filter(p => reservationIds.includes(p.id));
+
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-display mb-8">Mi Perfil</h1>
@@ -123,6 +127,37 @@ const ProfilePage = () => {
                             )}
                         </Card>
                     </section>
+                    {/* Sección Mis Reservas */}
+                    <section>
+                        <h2 className="text-2xl font-display mb-4 text-purple-400">Mis Reservas 🚀</h2>
+                        {reservedItems.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {reservedItems.map(product => (
+                                    <Card key={product.id} className="p-4 flex gap-4 items-center group border-purple-500/30">
+                                        <div className="w-16 h-16 bg-gray-800 rounded overflow-hidden flex-shrink-0 relative">
+                                            <img src={product.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                            <div className="absolute inset-0 bg-purple-500/20 mix-blend-overlay"></div>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-bold text-white truncate">{product.title}</h4>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded">Reservado</span>
+                                                <p className="text-gray-400 text-xs">{product.releaseDate || 'Pronto'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <Button size="sm" onClick={() => navigate(`/product/${product.id}`)}>Ver</Button>
+                                        </div>
+                                    </Card>
+                                ))}
+                            </div>
+                        ) : (
+                            <Card className="p-8 text-center border-gray-800">
+                                <p className="text-gray-400">No tienes reservas activas.</p>
+                            </Card>
+                        )}
+                    </section>
+
                     {/* Sección Lista de Deseos */}
                     <section>
                         <h2 className="text-2xl font-display mb-4 text-pink-500">Mi Lista de Deseos ❤️</h2>

@@ -36,6 +36,7 @@ export interface UserProfile {
     role?: 'user' | 'admin';
     orders: Order[];
     wishlist?: string[]; // Array of product IDs
+    reservations?: string[]; // Array of product IDs for pre-orders
 }
 
 export interface Review {

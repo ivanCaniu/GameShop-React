@@ -19,7 +19,7 @@ const HomePage = () => {
                     <img
                         src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920&auto=format&fit=crop"
                         alt="Hero Background"
-                        className="w-full h-full object-cover opacity-50"
+                        className="w-full h-full object-cover object-center opacity-50"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/80 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent" />

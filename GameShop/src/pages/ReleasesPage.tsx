@@ -3,16 +3,44 @@ import { Clock, Calendar, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import { useProducts } from '../context/ProductContext'; // Import context
+import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const ReleasesPage = () => {
-    const { products } = useProducts(); // Use hook
+    const { products } = useProducts();
+    const { currentUser, addReservation } = useAuth();
 
     // Filter Pre-order Products
     const upcomingGames = products.filter(p => p.isPreorder);
 
-    const handlePreOrder = (gameTitle: string) => {
-        alert(`¡Reserva de ${gameTitle} solicitada! Te notificaremos cuando esté disponible.`);
+    const handlePreOrder = async (gameId: string, gameTitle: string) => {
+        if (!currentUser) {
+            toast.error('Inicia sesión para reservar este lanzamiento exclusivo', {
+                style: {
+                    background: '#1f2937',
+                    color: '#fff',
+                    border: '1px solid #7c3aed',
+                },
+                icon: '🔒',
+            });
+            return;
+        }
+
+        try {
+            await addReservation(gameId);
+            toast.success(`¡Reserva confirmada para ${gameTitle}!`, {
+                style: {
+                    background: '#059669',
+                    color: '#fff',
+                },
+                icon: '🎮',
+                duration: 4000,
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al reservar.");
+        }
     };
 
     return (
@@ -78,7 +106,7 @@ const ReleasesPage = () => {
 
                                 <Button
                                     className="w-full group-hover:bg-purple-600 group-hover:border-purple-600 transition-all mt-auto"
-                                    onClick={() => handlePreOrder(game.title)}
+                                    onClick={() => handlePreOrder(game.id, game.title)}
                                 >
                                     <Clock size={18} className="mr-2" />
                                     Reservar Ahora

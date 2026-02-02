@@ -12,6 +12,7 @@ interface AuthContextType {
     loginWithGoogle: () => Promise<void>;
     addOrder: (order: Order) => Promise<void>;
     toggleWishlist: (productId: string) => Promise<void>;
+    addReservation: (productId: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     // Resto de la lógica de hidratación...
                     if (!parsed.orders) parsed.orders = [];
                     if (!parsed.wishlist) parsed.wishlist = [];
+                    if (!parsed.reservations) parsed.reservations = [];
                     setCurrentUser(parsed);
                 }
             } catch (e) {
@@ -68,6 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userToSave = {
             ...user,
             wishlist: user.wishlist || [],
+            reservations: user.reservations || [],
             orders: user.orders || []
         };
         setCurrentUser(userToSave);
@@ -103,7 +106,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 displayName: data.user.name,
                 role: data.user.role,
                 orders: [],
-                wishlist: []
+                wishlist: [],
+                reservations: []
             };
 
             localStorage.setItem('token', data.token);
@@ -132,7 +136,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 displayName: data.user.name,
                 role: data.user.role,
                 orders: [],
-                wishlist: []
+                wishlist: [],
+                reservations: []
             };
 
             localStorage.setItem('token', data.token);
@@ -251,6 +256,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setCurrentUser(sessionUser);
     };
 
+    const addReservation = async (productId: string) => {
+        if (!currentUser) return;
+
+        // 1. Refresh data
+        let users = JSON.parse(localStorage.getItem('gameshop_users') || '[]');
+        let userIndex = users.findIndex((u: any) => u.uid === currentUser.uid);
+
+        // Si no existe, crearlo
+        if (userIndex === -1) {
+            const newUser = { ...currentUser, reservations: [] };
+            users.push(newUser);
+            userIndex = users.length - 1;
+        }
+
+        const userFromDb = users[userIndex];
+        const currentReservations = userFromDb.reservations || [];
+
+        // Avoid duplicates
+        if (currentReservations.includes(productId)) return;
+
+        const newReservations = [...currentReservations, productId];
+
+        // 2. Update DB
+        const updatedUser = { ...userFromDb, reservations: newReservations };
+        users[userIndex] = updatedUser;
+        localStorage.setItem('gameshop_users', JSON.stringify(users));
+
+        // 3. Update Session
+        const sessionUser: UserProfile = {
+            ...currentUser,
+            reservations: newReservations
+        };
+        localStorage.setItem('gameshop_session', JSON.stringify(sessionUser));
+        setCurrentUser(sessionUser);
+    };
+
     const value = {
         currentUser,
         loading,
@@ -259,7 +300,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
         loginWithGoogle,
         addOrder,
-        toggleWishlist
+        toggleWishlist,
+        addReservation
     };
 
     return (

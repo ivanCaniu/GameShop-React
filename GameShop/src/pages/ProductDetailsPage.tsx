@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { ShoppingCart, Check, ArrowLeft, Heart, Share2 } from 'lucide-react';
+import { ShoppingCart, Check, ArrowLeft, Heart, Share2, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
@@ -29,7 +29,7 @@ const ProductDetailsPage = () => {
     }
 
     const { addToCart } = useCart();
-    const { currentUser, toggleWishlist } = useAuth();
+    const { currentUser, toggleWishlist, addReservation } = useAuth();
 
     const handleAddToCart = () => {
         addToCart(product);
@@ -133,14 +133,34 @@ const ProductDetailsPage = () => {
 
                     {/* Acciones */}
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                        <Button
-                            size="lg"
-                            className="flex-1 flex items-center justify-center gap-2 text-lg"
-                            onClick={handleAddToCart}
-                        >
-                            <ShoppingCart size={24} />
-                            Añadir al Carrito
-                        </Button>
+                        {product.isPreorder ? (
+                            <Button
+                                size="lg"
+                                className={`flex-1 flex items-center justify-center gap-2 text-lg ${currentUser?.reservations?.includes(product.id) ? 'bg-purple-900/50 border-purple-500/30 text-purple-200 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-500 border-purple-500'}`}
+                                onClick={() => {
+                                    if (currentUser?.reservations?.includes(product.id)) return;
+                                    if (!currentUser) {
+                                        toast.error("Inicia sesión para reservar");
+                                        return;
+                                    }
+                                    addReservation(product.id);
+                                    toast.success("¡Reservado con éxito!");
+                                }}
+                                disabled={currentUser?.reservations?.includes(product.id)}
+                            >
+                                <Clock size={24} />
+                                {currentUser?.reservations?.includes(product.id) ? 'Reservado' : 'Reservar Ahora'}
+                            </Button>
+                        ) : (
+                            <Button
+                                size="lg"
+                                className="flex-1 flex items-center justify-center gap-2 text-lg"
+                                onClick={handleAddToCart}
+                            >
+                                <ShoppingCart size={24} />
+                                Añadir al Carrito
+                            </Button>
+                        )}
                         <div className="flex gap-4">
                             <Button
                                 variant={currentUser?.wishlist?.includes(product.id) ? "primary" : "secondary"}
