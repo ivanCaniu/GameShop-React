@@ -298,7 +298,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
         try {
             // 1. Call Backend
-            const updatedUser = await api.put<UserProfile>('/auth/profile', data);
+            // Map displayName to 'name' for backend compatibility
+            const payload: any = { ...data };
+            if (data.displayName) {
+                payload.name = data.displayName;
+                delete payload.displayName;
+            }
+
+            const updatedUser = await api.put<UserProfile>('/auth/profile', payload);
 
             // 2. Update Local State & Session
             const newSessionUser = { ...currentUser, ...updatedUser };
