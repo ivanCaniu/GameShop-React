@@ -39,7 +39,7 @@ Usamos **Context API** para manejar el estado global sin librerías externas pes
 *   **`CatalogPage`**: Catálogo completo con filtros por plataforma y tipo.
 *   **`ProductDetailsPage`**: Vista detallada de un producto.
 *   **`Auth`**: `LoginPage`, `RegisterPage`.
-*   **`ProfilePage`**: Panel del usuario (historial de pedidos, whitelist).
+*   **`ProfilePage`**: Panel del usuario. Muestra historial de pedidos, keys digitales y permite **Editar Perfil** (nombre, email, password) mediante un modal.
 *   **`CheckoutPage`**: Simulación de proceso de compra.
 
 ---
