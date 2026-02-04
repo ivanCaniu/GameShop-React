@@ -298,7 +298,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
         try {
             // 1. Call Backend
-            const updatedUser = await api.put<UserProfile>('/users/profile', data);
+            const updatedUser = await api.put<UserProfile>('/auth/profile', data);
 
             // 2. Update Local State & Session
             const newSessionUser = { ...currentUser, ...updatedUser };
