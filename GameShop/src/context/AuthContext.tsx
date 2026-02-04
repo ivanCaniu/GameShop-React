@@ -13,6 +13,7 @@ interface AuthContextType {
     addOrder: (order: Order) => Promise<void>;
     toggleWishlist: (productId: string) => Promise<void>;
     addReservation: (productId: string) => Promise<void>;
+    updateProfile: (data: Partial<UserProfile> & { password?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -292,6 +293,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setCurrentUser(sessionUser);
     };
 
+    const updateProfile = async (data: Partial<UserProfile> & { password?: string }) => {
+        if (!currentUser) return;
+        setLoading(true);
+        try {
+            // 1. Call Backend
+            const updatedUser = await api.put<UserProfile>('/users/profile', data);
+
+            // 2. Update Local State & Session
+            const newSessionUser = { ...currentUser, ...updatedUser };
+            saveUserSession(newSessionUser);
+
+            // 3. Update 'currentUser' specifically to trigger re-renders
+            setCurrentUser(newSessionUser);
+            toast.success('Perfil actualizado correctamente');
+        } catch (error: any) {
+            console.error('Update profile error:', error);
+            toast.error(error.message || 'Error al actualizar perfil');
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const value = {
         currentUser,
         loading,
@@ -301,7 +325,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loginWithGoogle,
         addOrder,
         toggleWishlist,
-        addReservation
+        addReservation,
+        updateProfile
     };
 
     return (
